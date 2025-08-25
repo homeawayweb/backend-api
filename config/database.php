@@ -1,34 +1,35 @@
 <?php
 // File Path: portfolio-api/config/database.php
-// --- CORS HEADERS (must be at the very top, before any output) ---
-header("Access-Control-Allow-Origin: http://localhost:5173"); 
-header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
+
 class Database {
-    // --- UPDATE THESE DETAILS ---
-    private $host = '127.0.0.1';
-    private $db_name = 'portfolio'; // The same database you created for Laravel
-    private $username = 'root';
-    private $password = '';
-    // --------------------------
+    // --- Get credentials from Environment Variables provided by Render ---
+    private $host;
+    private $db_name;
+    private $username;
+    private $password;
+
+    public function __construct() {
+        $this->host = getenv('DB_HOST');
+        $this->db_name = getenv('DB_NAME');
+        $this->username = getenv('DB_USER');
+        $this->password = getenv('DB_PASS');
+    }
+    // ---------------------------------------------------------------
 
     private $conn;
 
-    // The connect method
     public function connect() {
         $this->conn = null;
-
+        // The DSN (Data Source Name) is built from the environment variables
         $dsn = 'mysql:host=' . $this->host . ';dbname=' . $this->db_name;
-
         try {
             $this->conn = new PDO($dsn, $this->username, $this->password);
-            // Set PDO to throw exceptions on error
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch(PDOException $e) {
-            // In a real app, you would log this error, not echo it
-            echo 'Connection Error: ' . $e->getMessage();
+            // In a production environment, you should log this error, not display it.
+            // For now, this helps with debugging if the connection fails.
+            die("Database Connection Error: " . $e->getMessage());
         }
-
         return $this->conn;
     }
 }
