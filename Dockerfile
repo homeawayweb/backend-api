@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y \
     unzip \
     && rm -rf /var/lib/apt/lists/*
 
-# Now that the dependencies are installed, we can install the PHP extensions.
+# Now that the dependencies are installed, we can safely install the PHP extensions.
 RUN docker-php-ext-install pdo pdo_mysql zip fileinfo
 
 # Enable Apache's rewrite module, which is good practice for routing.
